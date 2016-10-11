@@ -5,8 +5,8 @@
 
 var Rope = function () {
 	var instance = this,
-        MAX_SEGMENTS = 11,
-        stretch = 0.4,
+        MAX_POINTS = 4,// Points - 1 segments.
+        stretch = 0.1,
         line = {
             'width' : {
                 'min' : 0,
@@ -22,11 +22,11 @@ var Rope = function () {
     
 	//var SEG_DISTANCE = 5;
     
-	line.width.ratio = (line.width.max - line.width.min) / MAX_SEGMENTS;
+	line.width.ratio = (line.width.max - line.width.min) / MAX_POINTS;
 	
 	//var colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0));
 
-	for (i = 0; i < MAX_SEGMENTS; i += 1) {
+	for (i = 0; i < MAX_POINTS; i += 1) {
 		list.push(new Movable());
 	}
 
@@ -72,7 +72,14 @@ var Rope = function () {
 				ctx.lineWidth = line.width.min + (list.length - i) * line.width.ratio;
 				ctx.beginPath();
 				ctx.moveTo(xLast, yLast);
-				ctx.lineTo(point.x(), point.y());
+                
+				//ctx.lineTo(point.x(), point.y());
+                var cp = {
+                    'x' : (xLast + point.x() - 10)/2,
+                    'y' : (yLast + point.y() - 10)/2
+                };
+                ctx.quadraticCurveTo(cp.x, cp.y, point.x(), point.y());
+                
 				ctx.stroke();
 			}
 

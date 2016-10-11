@@ -3,9 +3,7 @@
 /*global Vector, ctx*/
 
 var Movable = function () {
-	var values = {};
-    this.init(values);
-	this.place.apply(this, arguments);
+    this.init.apply(this, arguments);
 };
 
 (function () {
@@ -23,67 +21,50 @@ var Movable = function () {
         }
     };
     
-    proto.init = function (values) {
-        this._values = values;
+    proto.init = function () {
+        var v = this.values = {};
         onVectorNames(function (name) {
-            values[name] = new Vector();
+            v[name] = new Vector();
         });
+        this.place.apply(this, arguments);
     };
-    
-    /*
-    proto.operation = function(vectorName, methodName, v) {
-        var vector = this._values[vectorName];
-        var fn = vector[methodName];
-        return fn(v);
-    };
-    
-    initVector = function (map, methodName, vectorName) {
-        map[vectorName] = function (v) {
-            return proto.operation.call(this, vectorName, methodName, v);
-        };
-    };
-    
-    for (i = 0; i < methodNames.length; i += 1) {
-        var methodName = methodNames[i];
-        var map = proto[methodName] = {};
-        onVectorNames(function(vectorName) {
-            initVector(map, methodName, vectorName);
-        });
-    }*/
     
     proto.integrate = function () {
-        var values = this._values;
-        values.velocity.add.call(this, values.acceleration);
-        values.position.add.call(this, values.velocity);
-        values.acceleration.mul.apply(this, [friction, friction, friction]);
+        var values = this.values;
+        values.velocity.add(values.acceleration);
+        values.position.add(values.velocity);
+        values.acceleration.mul(friction, friction, friction);
 	};
     
 	proto.place = function () {
-        this._values.position.set.apply(this, arguments);
+        var position = this.values.position;
+        position.set.apply(position, arguments);
 	};
     
     proto.move = function () {
-		this._values.velocity.set.apply(this, arguments);
+        var velocity = this.values.velocity;
+        velocity.set.apply(velocity, arguments);
 	};
     
     proto.accelerate = function () {
-		this._values.acceleration.set.apply(this, arguments);
+		var acceleration = this.values.acceleration;
+        acceleration.set.apply(acceleration, arguments);
 	};
     
     proto.x = function () {
-        return this._values.position.x();
+        return this.values.position.x();
     };
     
-    proto.y = function() {
-        return this._values.position.y();
+    proto.y = function () {
+        return this.values.position.y();
     };
     
-    proto.z = function() {
-        return this._values.position.z();
+    proto.z = function () {
+        return this.values.position.z();
     };
     
-    proto.toString = function() {
-        return this.x() + ', ' + this.y() + ', ' + this.z();
+    proto.toString = function () {
+        return this.values.position.toString();
     };
     
 }());

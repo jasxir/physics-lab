@@ -3,16 +3,19 @@
 /*global Vector, ctx*/
 
 var Vector = function () {
-	var instance = this,
+	this.set.apply(this, arguments);
+};
+
+(function () {
+    var proto = Vector.prototype,
         valueKeys = ['x', 'y', 'z'],
-        values = {},
         onEach,
         objectAfter,
         toObject,
         vectorAfter,
         evaluate;
     
-	onEach = function (callback) {
+    onEach = function (callback, values) {
         var i,
             key,
             value,
@@ -20,22 +23,30 @@ var Vector = function () {
         
 		for (i = 0; i < valueKeys.length; i += 1) {
 			key = valueKeys[i];
-			value = values[key];
+            if (values) {
+                value = values[key];
+            }
             returnedValue = callback(value, key, i);
 			if (returnedValue !== undefined) {
-				values[key] = returnedValue;
+                if (values) {
+                    values[key] = returnedValue;
+                }
 			}
 		}
 	};
 
-	objectAfter = function (callback) {
+	objectAfter = function (callback, values) {
 		var o = {};
 		onEach(function (value, key, index) {
 			o[key] = callback(value, key, index);
-		});
+		}, values);
 		return o;
 	};
-
+    
+    vectorAfter = function (callback, values) {
+		return new Vector(objectAfter(callback, values));
+	};
+    
 	toObject = function (arg, index) {
 		if (!index) {
 			index = 0;
@@ -69,15 +80,11 @@ var Vector = function () {
 		}
 	};
 
-	vectorAfter = function (callback) {
-		return new Vector(objectAfter(callback));
-	};
-
-	evaluate = function (gValue, key) {
+	evaluate = function (gValue, key, values) {
 		if (gValue) {
             switch (gValue.constructor) {
             case Function:
-                values[key] = evaluate(gValue(values[key]), key);
+                values[key] = evaluate(gValue(values[key]), key, values);
                 break;
             case String:
                 gValue = Number(gValue);
@@ -87,90 +94,93 @@ var Vector = function () {
         }
 		return values[key];
 	};
-
-	instance.val = function () {
+    
+    ////////////////////
+    //Instance Methods//
+    ////////////////////
+    
+    proto.val = function () {
 		return objectAfter(function (value) {
 			return value;
-		});
+		}, this.values);
 	};
-
-	instance.mag = function () {
+    
+	proto.mag = function () {
 		var sum = 0;
 		onEach(function (value) {
 			sum += Math.pow(value, 2);
-		});
+		}, this.values);
 		return Math.sqrt(sum);
 	};
 
-	instance.set = function () {
-		values = toObject(arguments);
+	proto.set = function () {
+		this.values = toObject(arguments);
 	};
-
-	instance.rotateXY = function (angleRad) {
-		var xn = values.x * Math.cos(angleRad) - values.y * Math.sin(angleRad),
-            yn = values.x * Math.sin(angleRad) + values.y * Math.cos(angleRad);
-        values.x = xn;
-        values.y = yn;
+    
+	proto.rotateXY = function (angleRad) {
+		var v = this.values,
+            xn = v.x * Math.cos(angleRad) - v.y * Math.sin(angleRad),
+            yn = v.x * Math.sin(angleRad) + v.y * Math.cos(angleRad);
+        v.x = xn;
+        v.y = yn;
 	};
-
-	/*
-	instance.setMagAngle = function (mag, angle) {
-		onEach(function (value, key) {
-			return (key  ==  'x') ? mag : 0;
-		});
-		instance.rotateXY(angle);
-	};*/
-	
-	instance.cloneObject = function () {
+    
+	proto.cloneObject = function () {
 		return objectAfter(function (value) {
 			return value;
-		});
+		}, this.values);
 	};
 
-	instance.clone = function () {
+	proto.clone = function () {
 		return vectorAfter(function (value) {
 			return value;
 		});
 	};
 
-	instance.operation = function (fn, v) {
+	proto.operation = function (fn, v) {
 		onEach(function (value, key) {
 			return fn(value, v[key]);
-		});
-		return instance;
+		}, this.values);
+		return this;
 	};
-
-	instance.add = function () {
-		return instance.operation(function (v1, v2) {
+    
+	proto.add = function () {
+		return this.operation(function (v1, v2) {
 			return v1 + v2;
 		}, toObject(arguments));
 	};
 
-	instance.mul = function () {
-		return instance.operation(function (v1, v2) {
+	proto.mul = function () {
+		return this.operation(function (v1, v2) {
 			return v1 * v2;
 		}, toObject(arguments));
 	};
-
-	///////////////
-	// Execution //
-	///////////////
-
-	instance.set.apply(instance, arguments);
-
-	onEach(function (value, key, index) {
-		instance[key] = function (gValue) {
-			return evaluate(gValue, key);
-		};
-	});
-};
-
-Vector.xyzFromMagAngle = function (m, angleRad) {
-	var x = m * Math.cos(angleRad),
-        y = m * Math.sin(angleRad);
-    return {
-        'x' : x,
-        'y' : y,
-        'z' : 0
+    
+    proto.toString = function () {
+        var v = this.values;
+        return v.x + ', ' + v.y + ', ' + v.z;
     };
-};
+    
+    proto.x = function (v) {
+        return evaluate(v, 'x', this.values);
+    };
+    
+    proto.y = function (v) {
+        return evaluate(v, 'y', this.values);
+    };
+    
+    proto.z = function (v) {
+        return evaluate(v, 'z', this.values);
+    };
+    
+    Vector.xyzFromMagAngle = function (m, angleRad) {
+        var x = m * Math.cos(angleRad),
+            y = m * Math.sin(angleRad);
+        return {
+            'x' : x,
+            'y' : y,
+            'z' : 0
+        };
+    };
+    
+}());
