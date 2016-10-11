@@ -1,73 +1,89 @@
 "use strict";
-/*jslint browser:true, continue:true*/
+/*jslint browser:true*/
 /*global Vector, ctx*/
 
 var Movable = function () {
-	var instance = this,
+	var values = {};
+    this.init(values);
+	this.place.apply(this, arguments);
+};
+
+(function () {
+    var vectorNames = ['position', 'velocity', 'acceleration'],
+        methodNames = ['set', 'add', 'mul'],
+        proto = Movable.prototype,
         friction = 1,
-        vectorNames = ['position', 'velocity', 'acceleration'],
-        values = {},
-        initVector,
+        onVectorNames,
         i;
     
-	instance.set = {};
-	instance.add = {};
-	instance.mul = {};
+    onVectorNames = function (callback) {
+        var i;
+        for (i = 0; i < vectorNames.length; i += 1) {
+            callback(vectorNames[i], i);
+        }
+    };
     
-    initVector = function (vectorName) {
-		var vector = values[vectorName] = new Vector();
-
-		instance.set[vectorName] = function () {
-			vector.set.apply(null, arguments);
-		};
-
-		instance.add[vectorName] = function () {
-			vector.add.apply(null, arguments);
-		};
-
-		instance.mul[vectorName] = function () {
-			vector.mul.apply(null, arguments);
-		};
+    proto.init = function (values) {
+        this._values = values;
+        onVectorNames(function (name) {
+            values[name] = new Vector();
+        });
+    };
+    
+    /*
+    proto.operation = function(vectorName, methodName, v) {
+        var vector = this._values[vectorName];
+        var fn = vector[methodName];
+        return fn(v);
+    };
+    
+    initVector = function (map, methodName, vectorName) {
+        map[vectorName] = function (v) {
+            return proto.operation.call(this, vectorName, methodName, v);
+        };
+    };
+    
+    for (i = 0; i < methodNames.length; i += 1) {
+        var methodName = methodNames[i];
+        var map = proto[methodName] = {};
+        onVectorNames(function(vectorName) {
+            initVector(map, methodName, vectorName);
+        });
+    }*/
+    
+    proto.integrate = function () {
+        var values = this._values;
+        values.velocity.add.call(this, values.acceleration);
+        values.position.add.call(this, values.velocity);
+        values.acceleration.mul.apply(this, [friction, friction, friction]);
 	};
-
-	for (i = 0; i < vectorNames.length; i += 1) {
-		initVector(vectorNames[i]);
-	}
-
-	instance.move = function () {
-		instance.set.position.apply(null, arguments);
+    
+	proto.place = function () {
+        this._values.position.set.apply(this, arguments);
 	};
-
-	instance.accelerate = function () {
-		instance.set.acceleration.apply(null, arguments);
+    
+    proto.move = function () {
+		this._values.velocity.set.apply(this, arguments);
 	};
-
-	instance.velocity = function () {
-		instance.set.velocity.apply(null, arguments);
+    
+    proto.accelerate = function () {
+		this._values.acceleration.set.apply(this, arguments);
 	};
-
-	instance.integrate = function () {
-		instance.add.velocity(values.acceleration);
-		instance.add.position(values.velocity);
-		//TODO
-		instance.mul.acceleration(friction, friction, friction);
-	};
-
-	instance.x = function () {
-		return values.position.x();
-	};
-
-	instance.y = function () {
-		return values.position.y();
-	};
-
-	instance.z = function () {
-		return values.position.z();
-	};
-
-	///////////////
-	// Execution //
-	///////////////
-
-	instance.move.apply(null, arguments);
-};
+    
+    proto.x = function () {
+        return this._values.position.x();
+    };
+    
+    proto.y = function() {
+        return this._values.position.y();
+    };
+    
+    proto.z = function() {
+        return this._values.position.z();
+    };
+    
+    proto.toString = function() {
+        return this.x() + ', ' + this.y() + ', ' + this.z();
+    };
+    
+}());

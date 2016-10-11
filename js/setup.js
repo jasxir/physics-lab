@@ -6,6 +6,6 @@ ctx.lineWidth = 3;
 ctx.strokeStyle = '#888';
 ctx.lineCap = 'round';
 
-var toRad = function(deg) {
-	return deg * Math.PI/180;
+var toRad = function (deg) {
+	return deg * Math.PI / 180;
 };

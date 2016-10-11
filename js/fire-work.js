@@ -4,18 +4,18 @@
 
 var FireWork = function (x, y) {
 	var instance = this,
-        MAX_STRANDS = 15,
+        MAX_STRANDS = 9,
         list = [],
         origin = new Movable(x, y),
         color = new Color(),
         i,
+        rope,
+        rad,
+        mag,
         angle = {
             'mid' : 270,
             'spread' : 100
-        },
-        rope,
-        rad,
-        mag;
+        };
     
     color.set.hsl(RandomUtil.i(0, 360), 100, 50);
     
@@ -29,12 +29,12 @@ var FireWork = function (x, y) {
 		rad = toRad(RandomUtil.i(angle.min, angle.max));
 		mag = RandomUtil.i(6, 9);
         
-		rope.move(origin.x(), origin.y());
-		rope.velocity(Vector.xyzFromMagAngle(mag, rad));
+		rope.place(origin.x(), origin.y());
+		rope.move(Vector.xyzFromMagAngle(mag, rad));
 		rope.accelerate(0, 0.2);
 		list.push(rope);
 	}
-
+    
 	instance.render = function (ctx) {
 		var i,
             item,

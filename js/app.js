@@ -6,8 +6,25 @@ var TIMEOUT = 0;
 var STEP_COUNT = 800;
 var play = true;
 
+var speed = {
+    'down' : function () {
+        if(TIMEOUT >= 100) {
+            return;
+        }
+        TIMEOUT++;
+    },
+    
+    'up' : function () {
+        if(TIMEOUT < 1) {
+            return;
+        }
+        TIMEOUT--;
+    }
+};
+
 var fireWorkList = [];
 var emptyIndexList = [];
+var bubbleList = [];
 var fireWork = new FireWork();
 var padding = 200;
 
@@ -24,6 +41,20 @@ var generateFireWork = function () {
 	} else {
 		fireWorkList.push(fireWork);
 	}
+};
+
+
+var dropBall = function () {
+    var bubble = new Bubble(),
+        x = RandomUtil.i(padding, width - padding),
+        y = RandomUtil.i(padding, padding + 100),
+        index;
+    
+    bubble.place(x, y);
+    bubble.radius(5);
+    bubble.move(2, -6, 0);
+    bubble.accelerate(0, 0.3, 0);
+    bubbleList.push(bubble);
 };
 
 generateFireWork();
@@ -46,7 +77,10 @@ var render = function (ctx) {
 
 		fireWork.render(ctx);
 	}
-	//bubble.render(ctx);
+    
+    for (i = 0; i < bubbleList.length; i += 1) {
+        bubbleList[i].render(ctx);
+    }
 };
 
 var integrate = function () {
@@ -81,4 +115,6 @@ var togglePlay = function () {
 	}
 };
 
-window.requestAnimationFrame(step);
+if(play) {
+    window.requestAnimationFrame(step);
+}

@@ -7,18 +7,27 @@ var Bubble = function () {
         instance = this,
         origin = new Movable();
     
-	instance.render = function (ctx) {
+	instance.render = function (ctx) {    
+        origin.integrate.apply(origin);        
+        ctx.strokeStyle = '#FF0011';
 		ctx.beginPath();
 		ctx.ellipse(origin.x(), origin.y(), radius, radius, toRad(45), 0, toRad(360));
 		ctx.stroke();
 	};
-
-	instance.integrate = origin.integrate;
-	instance.accelerate = origin.accelerate;
-	instance.velocity = origin.velocity;
-	instance.move = origin.move;
-
-	instance.radius = function (r) {
+    
+    instance.place = function() {
+        origin.place.apply(origin, arguments);
+    };
+    
+    instance.move = function() {
+        origin.move.apply(origin, arguments);
+    };
+    
+    instance.accelerate = function() {
+        origin.accelerate.apply(origin, arguments);
+    };
+    
+    instance.radius = function (r) {
 		if (r) {
 			radius = r;
 		}
