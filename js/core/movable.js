@@ -52,15 +52,15 @@ var Movable = function () {
 	};
     
     proto.x = function () {
-        return this.values.position.x();
+        return this.values.position.x;
     };
     
     proto.y = function () {
-        return this.values.position.y();
+        return this.values.position.y;
     };
     
     proto.z = function () {
-        return this.values.position.z();
+        return this.values.position.z;
     };
     
     proto.toString = function () {

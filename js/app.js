@@ -2,7 +2,7 @@
 /*jslint browser:true, continue:true*/
 /*global FireWork, RandomUtil, width, height, ctx*/
 
-var TIMEOUT = 70;
+var TIMEOUT = 0;
 var STEP_COUNT = 800;
 var play = true;
 

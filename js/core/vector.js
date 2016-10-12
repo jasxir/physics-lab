@@ -102,23 +102,26 @@ var Vector = function () {
     proto.val = function () {
 		return objectAfter(function (value) {
 			return value;
-		}, this.values);
+		}, this);
 	};
     
 	proto.mag = function () {
 		var sum = 0;
 		onEach(function (value) {
 			sum += Math.pow(value, 2);
-		}, this.values);
+		}, this);
 		return Math.sqrt(sum);
 	};
 
 	proto.set = function () {
-		this.values = toObject(arguments);
+        var map = toObject(arguments);
+        onEach(function (value, key) {
+            return map[key];
+        }, this);
 	};
     
 	proto.rotateXY = function (angleRad) {
-		var v = this.values,
+		var v = this,
             xn = v.x * Math.cos(angleRad) - v.y * Math.sin(angleRad),
             yn = v.x * Math.sin(angleRad) + v.y * Math.cos(angleRad);
         v.x = xn;
@@ -128,7 +131,7 @@ var Vector = function () {
 	proto.cloneObject = function () {
 		return objectAfter(function (value) {
 			return value;
-		}, this.values);
+		}, this);
 	};
 
 	proto.clone = function () {
@@ -140,7 +143,7 @@ var Vector = function () {
 	proto.operation = function (fn, v) {
 		onEach(function (value, key) {
 			return fn(value, v[key]);
-		}, this.values);
+		}, this);
 		return this;
 	};
     
@@ -157,20 +160,8 @@ var Vector = function () {
 	};
     
     proto.toString = function () {
-        var v = this.values;
+        var v = this;
         return v.x + ', ' + v.y + ', ' + v.z;
-    };
-    
-    proto.x = function (v) {
-        return evaluate(v, 'x', this.values);
-    };
-    
-    proto.y = function (v) {
-        return evaluate(v, 'y', this.values);
-    };
-    
-    proto.z = function (v) {
-        return evaluate(v, 'z', this.values);
     };
     
     Vector.xyzFromMagAngle = function (m, angleRad) {

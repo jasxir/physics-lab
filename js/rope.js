@@ -5,8 +5,8 @@
 
 var Rope = function () {
 	var instance = this,
-        MAX_POINTS = 4,// Points - 1 segments.
-        stretch = 0.1,
+        MAX_POINTS = 10,// Points - 1 segments.
+        stretch = 0.4,
         line = {
             'width' : {
                 'min' : 0,
@@ -42,7 +42,8 @@ var Rope = function () {
 	instance.render = function (ctx) {
 		var divisor = 1.8,
             xLast,
-            yLast;
+            yLast,
+            useCurve = true;
         
 		onEach(function (point, i) {
 			if (i) {
@@ -73,13 +74,16 @@ var Rope = function () {
 				ctx.beginPath();
 				ctx.moveTo(xLast, yLast);
                 
-				//ctx.lineTo(point.x(), point.y());
-                var cp = {
-                    'x' : (xLast + point.x() - 10)/2,
-                    'y' : (yLast + point.y() - 10)/2
-                };
-                ctx.quadraticCurveTo(cp.x, cp.y, point.x(), point.y());
-                
+                if(useCurve) {
+                    var cp = {
+                        'x' : (xLast + point.x())/2,
+                        'y' : (yLast + point.y())/2
+                    };
+                    ctx.quadraticCurveTo(cp.x, cp.y, point.x(), point.y());
+                    
+                } else {
+                    ctx.lineTo(point.x(), point.y());
+                }
 				ctx.stroke();
 			}
 
