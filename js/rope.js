@@ -2,52 +2,53 @@
 /*jslint browser:true*/
 /*global Movable, ctx*/
 
-
 var Rope = function () {
-	var instance = this,
+    this.init(this, arguments);
+};
+
+(function () {
+    var proto = Rope.prototype,
         MAX_POINTS = 10,// Points - 1 segments.
         stretch = 0.4,
+        i,
+        //colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0)),
+        //SEG_DISTANCE = 5,
+        colorLister = null,
+        origin,
+        onEach,
         line = {
             'width' : {
                 'min' : 0,
                 'max' : 3
             }
-        },
-        list = [],
-        i,
-        //colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0)),
-        colorLister = null,
-        origin,
-        onEach;
+        };
     
-	//var SEG_DISTANCE = 5;
+    line.width.ratio = (line.width.max - line.width.min) / MAX_POINTS;
     
-	line.width.ratio = (line.width.max - line.width.min) / MAX_POINTS;
-	
-	//var colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0));
-
-	for (i = 0; i < MAX_POINTS; i += 1) {
-		list.push(new Movable());
-	}
-
-	origin = list[0];
-
-	onEach = function (callback) {
+    onEach = function (callback, list) {
         var i;
-		for (i = 0; i < list.length; i += 1) {
-			callback(list[i], i);
-		}
-	};
-
-	instance.render = function (ctx) {
-		var divisor = 1.8,
+        for (i = 0; i < list.length; i += 1) {
+            callback(list[i], i);
+        }
+    };
+    
+    proto.init = function() {
+        this.list = [];
+        for (i = 0; i < MAX_POINTS; i += 1) {
+            this.list.push(new Movable());
+        }
+        this.origin = this.list[0];
+    };
+    
+    proto.render = function (ctx) {
+        var divisor = 1.8,
             xLast,
             yLast,
-            useCurve = true;
+            useCurve = true,
+            list = this.list;
         
 		onEach(function (point, i) {
 			if (i) {
-                
                 ///////////////
                 //Integrating//
                 ///////////////
@@ -76,8 +77,8 @@ var Rope = function () {
                 
                 if(useCurve) {
                     var cp = {
-                        'x' : (xLast + point.x())/2,
-                        'y' : (yLast + point.y())/2
+                        'x' : (xLast + point.x()) / 2,
+                        'y' : (yLast + point.y()) / 2
                     };
                     ctx.quadraticCurveTo(cp.x, cp.y, point.x(), point.y());
                     
@@ -89,24 +90,21 @@ var Rope = function () {
 
 			xLast = point.x();
 			yLast = point.y();
-		});
+		}, this.list);
 	};
     
-	instance.place = function () {
+    proto.place = function () {
 		var arg = arguments;
 		onEach(function (item) {
 			item.place.apply(item, arg);
-		});
+		}, this.list);
 	};
     
-    instance.move = function () {
-        origin.move.apply(origin, arguments);
+    proto.move = function () {
+        this.origin.move.apply(this.origin, arguments);
     };
     
-    instance.accelerate = function () {
-        origin.accelerate.apply(origin, arguments);
+    proto.accelerate = function () {
+        this.origin.accelerate.apply(this.origin, arguments);
     };
-    
-    instance.x = origin.x;
-	instance.y = origin.y;
-};
+}());
