@@ -19,9 +19,19 @@ var ColorUtil = {
                 h = h.h;
             }
 			return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+		},
+
+		'hsla' : function (h, s, l, a) {
+            if (s === undefined) {
+                s = h.s;
+                l = h.l;
+                a = h.a;
+                h = h.h;
+            }
+			return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
 		}
 	},
-
+    
 	'toHSL' : function (r, g, b) {
 		r /= 255;
 		g /= 255;
@@ -92,7 +102,6 @@ var ColorUtil = {
     },
     
     'darken' : function (c, amt) {
-        
         if (c.l === 0) {
             return false;
         }
@@ -105,5 +114,20 @@ var ColorUtil = {
 		} else {
             return true;
         }
-	}
+	},
+    
+    'fade' : function (c, amt) {
+        if (c.a === 0) {
+            return false;
+        }
+        
+        c.a -= amt;
+		if (c.a < 0) {
+			c.a = 0;
+            return false;
+            
+		} else {
+            return true;
+        }
+    }
 };

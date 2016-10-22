@@ -1,32 +1,15 @@
 "use strict";
 /*jslint browser:true, continue:true*/
-/*global FireWork, RandomUtil, width, height, ctx*/
-
-var TIMEOUT = 0;
-var STEP_COUNT = 800;
-var play = true;
-
-var speed = {
-    'down' : function () {
-        if(TIMEOUT >= 100) {
-            return;
-        }
-        TIMEOUT++;
-    },
-    
-    'up' : function () {
-        if(TIMEOUT < 1) {
-            return;
-        }
-        TIMEOUT--;
-    }
-};
+/*global Animator, Rope, Bubble, FireWork, RandomUtil, width, height, ctx*/
 
 var fireWorkList = [];
 var emptyIndexList = [];
 var bubbleList = [];
 var fireWork = new FireWork();
 var padding = 200;
+
+var followerRope = new Rope();
+followerRope.color = 'red';
 
 var generateFireWork = function () {
 	var x = RandomUtil.i(padding, width - padding),
@@ -42,7 +25,6 @@ var generateFireWork = function () {
 		fireWorkList.push(fireWork);
 	}
 };
-
 
 var dropBall = function () {
     var bubble = new Bubble(),
@@ -61,6 +43,7 @@ generateFireWork();
 
 var render = function (ctx) {
 	ctx.fillRect(0, 0, width, height);
+    followerRope.render(ctx);
 	var fireWork, i;
 	//var removeList = [];
 	for (i = 0; i < fireWorkList.length; i += 1) {
@@ -87,34 +70,11 @@ var integrate = function () {
 	//bubble.integrate();
 };
 
-var step = function (timestamp) {
-	if ((STEP_COUNT -= 1) === 0) {
-		return;
-	}
-    
-	integrate();
-	render(ctx);
+var animator = new Animator(function () {
+    render(ctx);
+});
 
-	if (play) {
-		if (TIMEOUT) {
-			window.setTimeout(function () {
-				window.requestAnimationFrame(step);
-			}, TIMEOUT);
-
-		} else {
-			window.requestAnimationFrame(step);
-		}
-	}
+var mouseMoved = function (x, y) {
+    //console.log(x, y);
+    followerRope.setOrigin(x, y);
 };
-
-
-var togglePlay = function () {
-	play = !play;
-	if (play) {
-		window.requestAnimationFrame(step);
-	}
-};
-
-if(play) {
-    window.requestAnimationFrame(step);
-}

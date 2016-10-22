@@ -8,8 +8,8 @@ var Rope = function () {
 
 (function () {
     var proto = Rope.prototype,
-        MAX_POINTS = 10,// Points - 1 segments.
-        stretch = 0.4,
+        MAX_POINTS = 7,// Points - 1 segments.
+        stretch = 0.5,
         i,
         //colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0)),
         //SEG_DISTANCE = 5,
@@ -32,7 +32,7 @@ var Rope = function () {
         }
     };
     
-    proto.init = function() {
+    proto.init = function () {
         this.list = [];
         for (i = 0; i < MAX_POINTS; i += 1) {
             this.list.push(new Movable());
@@ -41,7 +41,8 @@ var Rope = function () {
     };
     
     proto.render = function (ctx) {
-        var divisor = 1.8,
+        var instance = this,
+            divisor = 1.8,
             xLast,
             yLast,
             useCurve = true,
@@ -71,11 +72,14 @@ var Rope = function () {
 				if (colorLister !== null) {
 					ctx.strokeStyle = colorLister.get();
 				}
+                if(instance.color) {
+                    ctx.strokeStyle = instance.color;
+                }
 				ctx.lineWidth = line.width.min + (list.length - i) * line.width.ratio;
 				ctx.beginPath();
 				ctx.moveTo(xLast, yLast);
                 
-                if(useCurve) {
+                if (useCurve) {
                     var cp = {
                         'x' : (xLast + point.x()) / 2,
                         'y' : (yLast + point.y()) / 2
@@ -93,10 +97,15 @@ var Rope = function () {
 		}, this.list);
 	};
     
+    proto.setOrigin = function () {
+        var item = this.list[0];
+        item.place.apply(item, arguments);
+    };
+    
     proto.place = function () {
 		var arg = arguments;
-		onEach(function (item) {
-			item.place.apply(item, arg);
+		onEach(function (item, index) {
+            item.place.apply(item, arg);
 		}, this.list);
 	};
     

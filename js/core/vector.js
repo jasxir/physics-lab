@@ -120,14 +120,6 @@ var Vector = function () {
         }, this);
 	};
     
-	proto.rotateXY = function (angleRad) {
-		var v = this,
-            xn = v.x * Math.cos(angleRad) - v.y * Math.sin(angleRad),
-            yn = v.x * Math.sin(angleRad) + v.y * Math.cos(angleRad);
-        v.x = xn;
-        v.y = yn;
-	};
-    
 	proto.cloneObject = function () {
 		return objectAfter(function (value) {
 			return value;
@@ -147,7 +139,13 @@ var Vector = function () {
 		return this;
 	};
     
-	proto.add = function () {
+    proto.sub = function () {
+		return this.operation(function (v1, v2) {
+			return v1 - v2;
+		}, toObject(arguments));
+	};
+	
+    proto.add = function () {
 		return this.operation(function (v1, v2) {
 			return v1 + v2;
 		}, toObject(arguments));
@@ -163,6 +161,14 @@ var Vector = function () {
         var v = this;
         return v.x + ', ' + v.y + ', ' + v.z;
     };
+    
+    proto.rotateXY = function (angleRad) {
+		var v = this,
+            xn = v.x * Math.cos(angleRad) - v.y * Math.sin(angleRad),
+            yn = v.x * Math.sin(angleRad) + v.y * Math.cos(angleRad);
+        v.x = xn;
+        v.y = yn;
+	};
     
     Vector.xyzFromMagAngle = function (m, angleRad) {
         var x = m * Math.cos(angleRad),

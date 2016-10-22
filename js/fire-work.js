@@ -3,55 +3,64 @@
 /*global Color, ColorUtil, Movable, RandomUtil, Rope, Vector, height, toRad*/
 
 var FireWork = function (x, y) {
-	var instance = this,
+    this.init.apply(this, arguments);
+};
+
+(function () {
+    var proto = FireWork.prototype,
         MAX_STRANDS = 9,
-        list = [],
-        origin = new Movable(x, y),
-        color = new Color(),
-        i,
-        rope,
-        rad,
-        mag,
         angle = {
             'mid' : 270,
             'spread' : 100
         };
     
-    color.set.hsl(RandomUtil.i(0, 360), 100, 50);
+    angle.min = angle.mid - angle.spread / 2;
+    angle.max = angle.mid + angle.spread / 2;
     
-	instance.done = false;
-    
-	angle.min = angle.mid - angle.spread / 2;
-	angle.max = angle.mid + angle.spread / 2;
-
-	for (i = 0; i < MAX_STRANDS; i += 1) {
-        rope = new Rope();
-		rad = toRad(RandomUtil.i(angle.min, angle.max));
-		mag = RandomUtil.i(6, 9);
+    //TODO use general arguments.
+    proto.init = function (x, y) {
+        var rope,
+            i,
+            rad,
+            mag;
         
-		rope.place(origin.x(), origin.y());
-		rope.move(Vector.xyzFromMagAngle(mag, rad));
-		rope.accelerate(0, 0.2);
-		list.push(rope);
-	}
+        this.list = [];
+        this.color = new Color();
+        this.color.set.hsl(RandomUtil.i(0, 360), 100, 50, 1);
+        this.origin = new Movable(x, y);
+        this.done = false;
+        
+        for (i = 0; i < MAX_STRANDS; i += 1) {
+            rope = new Rope();
+            rad = toRad(RandomUtil.i(angle.min, angle.max));
+            mag = RandomUtil.i(6, 9);
+            
+            rope.place(this.origin.x(), this.origin.y());
+            rope.move(Vector.xyzFromMagAngle(mag, rad));
+            rope.accelerate(0, 0.2);
+            this.list.push(rope);
+        }
+    };
     
-	instance.render = function (ctx) {
+    proto.render = function (ctx) {
 		var i,
             item,
             darkened;
         
-        if (instance.done) {
+        if (this.done) {
 			return;
 		}
-        darkened = ColorUtil.darken(color, 0.8);
+        darkened = ColorUtil.fade(this.color, 0.013);
         if (!darkened) {
-            instance.done = true;
+            this.done = true;
             return;
         }
-		ctx.strokeStyle = ColorUtil.string.hsl(color);
-		for (i = 0; i < list.length; i += 1) {
-			item = list[i];
+        
+		ctx.strokeStyle = ColorUtil.string.hsla(this.color);
+		for (i = 0; i < this.list.length; i += 1) {
+			item = this.list[i];
 			item.render(ctx);
 		}
 	};
-};
+    
+}());
