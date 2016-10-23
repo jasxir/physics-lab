@@ -9,8 +9,7 @@ var fireWork = new FireWork();
 var padding = 200;
 
 var followerRope = defaultRopeFactory.get();
-followerRope.strokeStyle = 'red';
-
+followerRope.strokeStyle = ColorUtil.string.hsla(10, 100, 50, 0.8);
 var generateFireWork = function () {
 	var x = RandomUtil.i(padding, width - padding),
         y = RandomUtil.i(padding, padding + 100),
@@ -75,6 +74,10 @@ var animator = new Animator(function () {
 });
 
 var mouseMoved = function (x, y) {
-    //console.log(x, y);
     followerRope.setOrigin(x, y);
 };
+/*
+var v1 = new Vector(1, 2, 3);
+var v2 = new Vector(0, 1, 2);
+var v3 = v1.clone().sub(v2);
+console.log(v3);*/

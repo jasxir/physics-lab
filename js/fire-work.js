@@ -18,7 +18,7 @@ var FireWork = function (x, y) {
     angle.max = angle.mid + angle.spread / 2;
     
     var ropeFactory = new RopeFactory({
-        'pointCount' : 5,
+        'pointCount' : 4,
         'stretch' : 0.2,
         'line' : {
             'width' : {
@@ -43,11 +43,11 @@ var FireWork = function (x, y) {
         for (i = 0; i < MAX_STRANDS; i += 1) {
             rope = ropeFactory.get();
             rad = toRad(RandomUtil.i(angle.min, angle.max));
-            mag = RandomUtil.i(6, 9);
+            mag = RandomUtil.i(9, 15);
             
             rope.place(this.origin.x(), this.origin.y());
             rope.move(Vector.xyFromMagAngle(mag, rad));
-            rope.accelerate(0, 0.2);
+            rope.accelerate(0, 0.5);
             this.list.push(rope);
         }
     };
@@ -61,7 +61,7 @@ var FireWork = function (x, y) {
 			return;
 		}
         
-        faded = this.strokeStyle.fade(0.013);
+        faded = this.strokeStyle.fade(0.02);
         if (!faded) {
             this.done = true;
             return;

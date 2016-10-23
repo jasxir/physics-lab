@@ -32,11 +32,13 @@ var Rope = function () {
         var instance = this,
             options = this.options,
             divisor = 1.8,
+            lastPos,
             xLast,
             yLast,
             useCurve = true,
             stretch = options.stretch,
             line = options.line,
+            segLength = options.segLength,
             strokeStyle = options.strokeStyle,
             list = this.list;
         
@@ -45,15 +47,9 @@ var Rope = function () {
                 ///////////////
                 //Integrating//
                 ///////////////
-				
-                var dx = xLast - point.x(),
-                    dy = yLast - point.y();
-				//var d = Math.pow(dx, 2) + Math.pow(dy, 2);
-				//d = Math.pow(d, 1/2);
-				//if(d > SEG_DISTANCE)
-				//{
-				point.move(dx * stretch, dy * stretch);
-				//}
+                var distance = lastPos.clone().sub(point.position);
+                distance.setMag(distance.mag() - segLength);
+                point.move(distance.x * stretch, distance.y * stretch);
 			}
 			point.integrate();
             
@@ -61,7 +57,7 @@ var Rope = function () {
 			//Rendering//
 			/////////////
 			if (i) {
-                if(instance.strokeStyle) {
+                if (instance.strokeStyle) {
                     ctx.strokeStyle = instance.strokeStyle;
                     
                 } else {
@@ -91,8 +87,9 @@ var Rope = function () {
 				ctx.stroke();
 			}
 
-			xLast = point.x();
-			yLast = point.y();
+            lastPos = point.position;
+			xLast = lastPos.x;
+			yLast = lastPos.y;
 		}, this.list);
 	};
     

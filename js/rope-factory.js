@@ -5,14 +5,15 @@
 var RopeFactory = function (options) {
     var line,
         DEFAULT_OPTIONS = {
-            'pointCount'    : 30,
-            'stretch'       : 0.6,
+            'pointCount'    : 50,
+            'stretch'       : 0.8,
             'line' : {
                 'width' : {
                     'min' : 1,
                     'max' : 6
                 }
-            }
+            },
+            'segLength' : 3
         };
     
     options = merge.left(DEFAULT_OPTIONS, options);

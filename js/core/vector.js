@@ -116,7 +116,17 @@ var Vector = function () {
 		}, this);
 		return Math.sqrt(sum);
 	};
-
+    
+    proto.setMag = function(mag) {
+        var angle = this.angleXY();
+        this.setMagAngleXY(mag, angle);  
+    };
+    
+    proto.setMagAngleXY = function (mag, angle) {
+        this.set(mag, 0, 0);
+        this.rotateXY(angle);
+	};
+    
 	proto.set = function () {
         var map = toObject(arguments);
         onEach(function (value, key) {
@@ -133,9 +143,9 @@ var Vector = function () {
 	proto.clone = function () {
 		return vectorAfter(function (value) {
 			return value;
-		});
+		}, this);
 	};
-
+    
 	proto.operation = function (fn, v) {
 		onEach(function (value, key) {
 			return fn(value, v[key]);

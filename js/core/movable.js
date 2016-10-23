@@ -22,7 +22,7 @@ var Movable = function () {
     };
     
     proto.init = function () {
-        var v = this.values = {};
+        var v = this;
         onVectorNames(function (name) {
             v[name] = new Vector();
         });
@@ -30,41 +30,40 @@ var Movable = function () {
     };
     
     proto.integrate = function () {
-        var values = this.values;
-        values.velocity.add(values.acceleration);
-        values.position.add(values.velocity);
-        values.acceleration.mul(friction, friction, friction);
+        var v = this;
+        v.velocity.add(v.acceleration);
+        v.position.add(v.velocity);
+        v.acceleration.mul(friction, friction, friction);
 	};
     
 	proto.place = function () {
-        var position = this.values.position;
+        var position = this.position;
         position.set.apply(position, arguments);
 	};
     
     proto.move = function () {
-        var velocity = this.values.velocity;
+        var velocity = this.velocity;
         velocity.set.apply(velocity, arguments);
 	};
     
     proto.accelerate = function () {
-		var acceleration = this.values.acceleration;
+		var acceleration = this.acceleration;
         acceleration.set.apply(acceleration, arguments);
 	};
     
     proto.x = function () {
-        return this.values.position.x;
+        return this.position.x;
     };
     
     proto.y = function () {
-        return this.values.position.y;
+        return this.position.y;
     };
     
     proto.z = function () {
-        return this.values.position.z;
+        return this.position.z;
     };
     
     proto.toString = function () {
-        return this.values.position.toString();
+        return this.position.toString();
     };
-    
 }());
