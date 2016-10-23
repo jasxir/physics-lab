@@ -13,22 +13,11 @@ var ColorUtil = {
 		},
 
 		'hsl' : function (h, s, l) {
-            if (s === undefined) {
-                s = h.s;
-                l = h.l;
-                h = h.h;
-            }
 			return 'hsl(' + h + ',' + s + '%,' + l + '%)';
 		},
-
-		'hsla' : function (h, s, l, a) {
-            if (s === undefined) {
-                s = h.s;
-                l = h.l;
-                a = h.a;
-                h = h.h;
-            }
-			return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
+        
+        'hsla' : function (h, s, l, a) {
+            return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
 		}
 	},
     
@@ -98,36 +87,6 @@ var ColorUtil = {
         'HSL' : function (c) {
             var hsl = ColorUtil.toHSL(c.r, c.g, c.b);
             c.set.hsl(hsl.h, hsl.s, hsl.l);
-        }
-    },
-    
-    'darken' : function (c, amt) {
-        if (c.l === 0) {
-            return false;
-        }
-        
-		c.l -= amt;
-		if (c.l < 0) {
-			c.l = 0;
-            return false;
-            
-		} else {
-            return true;
-        }
-	},
-    
-    'fade' : function (c, amt) {
-        if (c.a === 0) {
-            return false;
-        }
-        
-        c.a -= amt;
-		if (c.a < 0) {
-			c.a = 0;
-            return false;
-            
-		} else {
-            return true;
         }
     }
 };

@@ -8,8 +8,8 @@ var bubbleList = [];
 var fireWork = new FireWork();
 var padding = 200;
 
-var followerRope = new Rope();
-followerRope.color = 'red';
+var followerRope = defaultRopeFactory.get();
+followerRope.strokeStyle = 'red';
 
 var generateFireWork = function () {
 	var x = RandomUtil.i(padding, width - padding),

@@ -3,27 +3,14 @@
 /*global Movable, ctx*/
 
 var Rope = function () {
-    this.init(this, arguments);
+    this.init.apply(this, arguments);
 };
 
 (function () {
     var proto = Rope.prototype,
-        MAX_POINTS = 7,// Points - 1 segments.
-        stretch = 0.5,
         i,
-        //colorLister = new ValueLister(ColorUtil.rgb(255, 5, 5), ColorUtil.rgb(200, 200, 0)),
-        //SEG_DISTANCE = 5,
-        colorLister = null,
         origin,
-        onEach,
-        line = {
-            'width' : {
-                'min' : 0,
-                'max' : 3
-            }
-        };
-    
-    line.width.ratio = (line.width.max - line.width.min) / MAX_POINTS;
+        onEach;
     
     onEach = function (callback, list) {
         var i;
@@ -32,9 +19,10 @@ var Rope = function () {
         }
     };
     
-    proto.init = function () {
+    proto.init = function (options) {
+        this.options = options;
         this.list = [];
-        for (i = 0; i < MAX_POINTS; i += 1) {
+        for (i = 0; i < this.options.pointCount; i += 1) {
             this.list.push(new Movable());
         }
         this.origin = this.list[0];
@@ -42,10 +30,14 @@ var Rope = function () {
     
     proto.render = function (ctx) {
         var instance = this,
+            options = this.options,
             divisor = 1.8,
             xLast,
             yLast,
             useCurve = true,
+            stretch = options.stretch,
+            line = options.line,
+            strokeStyle = options.strokeStyle,
             list = this.list;
         
 		onEach(function (point, i) {
@@ -69,12 +61,19 @@ var Rope = function () {
 			//Rendering//
 			/////////////
 			if (i) {
-				if (colorLister !== null) {
-					ctx.strokeStyle = colorLister.get();
-				}
-                if(instance.color) {
-                    ctx.strokeStyle = instance.color;
+                if(instance.strokeStyle) {
+                    ctx.strokeStyle = instance.strokeStyle;
+                    
+                } else {
+                    if (strokeStyle) {
+                        if (strokeStyle.constructor === Function) {
+                            ctx.strokeStyle = strokeStyle();
+                        } else {
+                            ctx.strokeStyle = strokeStyle;
+                        }
+                    }
                 }
+                
 				ctx.lineWidth = line.width.min + (list.length - i) * line.width.ratio;
 				ctx.beginPath();
 				ctx.moveTo(xLast, yLast);
@@ -98,8 +97,7 @@ var Rope = function () {
 	};
     
     proto.setOrigin = function () {
-        var item = this.list[0];
-        item.place.apply(item, arguments);
+        this.origin.place.apply(this.origin, arguments);
     };
     
     proto.place = function () {

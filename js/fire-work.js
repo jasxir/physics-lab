@@ -17,6 +17,17 @@ var FireWork = function (x, y) {
     angle.min = angle.mid - angle.spread / 2;
     angle.max = angle.mid + angle.spread / 2;
     
+    var ropeFactory = new RopeFactory({
+        'pointCount' : 5,
+        'stretch' : 0.2,
+        'line' : {
+            'width' : {
+                'min' : 0,
+                'max' : 3
+            }
+        }
+    });
+    
     //TODO use general arguments.
     proto.init = function (x, y) {
         var rope,
@@ -25,18 +36,17 @@ var FireWork = function (x, y) {
             mag;
         
         this.list = [];
-        this.color = new Color();
-        this.color.set.hsl(RandomUtil.i(0, 360), 100, 50, 1);
+        this.strokeStyle = Color.hsla(RandomUtil.i(0, 360), 100, 50, 1);
         this.origin = new Movable(x, y);
         this.done = false;
         
         for (i = 0; i < MAX_STRANDS; i += 1) {
-            rope = new Rope();
+            rope = ropeFactory.get();
             rad = toRad(RandomUtil.i(angle.min, angle.max));
             mag = RandomUtil.i(6, 9);
             
             rope.place(this.origin.x(), this.origin.y());
-            rope.move(Vector.xyzFromMagAngle(mag, rad));
+            rope.move(Vector.xyFromMagAngle(mag, rad));
             rope.accelerate(0, 0.2);
             this.list.push(rope);
         }
@@ -45,19 +55,21 @@ var FireWork = function (x, y) {
     proto.render = function (ctx) {
 		var i,
             item,
-            darkened;
+            faded;
         
         if (this.done) {
 			return;
 		}
-        darkened = ColorUtil.fade(this.color, 0.013);
-        if (!darkened) {
+        
+        faded = this.strokeStyle.fade(0.013);
+        if (!faded) {
             this.done = true;
             return;
         }
         
-		ctx.strokeStyle = ColorUtil.string.hsla(this.color);
-		for (i = 0; i < this.list.length; i += 1) {
+        ctx.strokeStyle = this.strokeStyle.hslaString();
+        
+        for (i = 0; i < this.list.length; i += 1) {
 			item = this.list[i];
 			item.render(ctx);
 		}

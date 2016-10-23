@@ -105,6 +105,10 @@ var Vector = function () {
 		}, this);
 	};
     
+    proto.angleXY = function () {
+        return Math.atan2(this.y, this.x);
+    };
+    
 	proto.mag = function () {
 		var sum = 0;
 		onEach(function (value) {
@@ -170,13 +174,12 @@ var Vector = function () {
         v.y = yn;
 	};
     
-    Vector.xyzFromMagAngle = function (m, angleRad) {
+    Vector.xyFromMagAngle = function (m, angleRad) {
         var x = m * Math.cos(angleRad),
             y = m * Math.sin(angleRad);
         return {
             'x' : x,
-            'y' : y,
-            'z' : 0
+            'y' : y
         };
     };
     
