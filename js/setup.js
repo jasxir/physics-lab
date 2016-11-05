@@ -1,11 +1,20 @@
-var canvas = document.getElementById('mCanvas');
-var width = canvas.width = window.innerWidth;
-var height = canvas.height = window.innerHeight;
-var ctx = canvas.getContext('2d');
-ctx.lineWidth = 3;
-ctx.strokeStyle = '#888';
-ctx.lineCap = 'round';
-
-var toRad = function (deg) {
-	return deg * Math.PI / 180;
-};
+(function () {
+    'use strict';
+    
+    var canvas = document.getElementById('mCanvas'),
+        ctx = canvas.getContext('2d'),
+        resolutionMultiplier = 1;
+    
+    canvas.width = window.innerWidth * resolutionMultiplier;
+    canvas.height = window.innerHeight * resolutionMultiplier;
+    
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#888';
+    ctx.lineCap = 'round';
+    
+    //TODO exposing to window, think of a better way.
+    window.ctx = ctx;
+    window.showMouse = function (doShow) {
+        canvas.className = doShow ? '' : 'no-mouse';
+    };
+}());

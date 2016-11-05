@@ -1,36 +1,52 @@
-"use strict";
-/*jslint browser:true, continue:true*/
-/*global ColorUtil, RandomUtil */
-
-var Color = function () {
-	var instance = this;
-    
-    instance.set = {
-        'hsla' : function (h, s, l, a) {
-            instance.h = h;
-            instance.s = s;
-            instance.l = l;
-            instance.a = a;
-            //ColorUtil.calculate.RGB(instance);
-        },
-        
-        'rgba' : function (r, g, b, a) {
-            instance.r = r;
-            instance.g = g;
-            instance.b = b;
-            instance.a = a;
-            ColorUtil.calculate.HSL(instance);
-        }
-    };
-};
-
 (function () {
-    var proto = Color.prototype;
+    "use strict";
+    /*jslint browser:true*/
+    /*global ColorUtil*/
     
-    Color.hsla = function(h, s, l, a) {
+    var Color = function () {
+        var instance = this;
+        instance.set = {
+            'hsla' : function (h, s, l, a) {
+                instance.h = h;
+                instance.s = s;
+                instance.l = l;
+                instance.a = a;
+                //ColorUtil.calculate.RGB(instance);
+            },
+            
+            'rgba' : function (r, g, b, a) {
+                instance.r = r;
+                instance.g = g;
+                instance.b = b;
+                instance.a = a;
+                ColorUtil.calculate.HSL(instance);
+            }
+        };
+    }, proto = Color.prototype;
+    
+    Color.hsla = function (h, s, l, a) {
         var color = new Color();
         color.set.hsla(h, s, l, a);
         return color;
+    };
+    
+    proto.hueShift = function (amt) {
+        return this.hue(this.hue() + amt);
+    };
+    
+    proto.hue = function (amt) {
+        if (amt !== undefined) {
+            if (amt >= 360) {
+                amt %= 360;
+            }
+            
+            if (amt < 0) {
+                amt = 0;
+            }
+            
+            this.h = amt;
+        }
+        return this.h;
     };
     
     proto.fade = function (amt) {
@@ -65,12 +81,13 @@ var Color = function () {
         }
 	};
     
-    proto.hslaString = function() {
+    proto.hslaString = function () {
         return ColorUtil.string.hsla(this.h, this.s, this.l, this.a);
     };
     
-    proto.hslString = function() {
+    proto.hslString = function () {
         return ColorUtil.string.hsl(this.h, this.s, this.l);
     };
     
+    window.Color = Color;
 }());

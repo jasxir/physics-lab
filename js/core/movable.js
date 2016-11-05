@@ -1,15 +1,14 @@
-"use strict";
-/*jslint browser:true*/
-/*global Vector, ctx*/
-
-var Movable = function () {
-    this.init.apply(this, arguments);
-};
-
 (function () {
-    var vectorNames = ['position', 'velocity', 'acceleration'],
-        methodNames = ['set', 'add', 'mul'],
+    "use strict";
+    /*jslint browser:true*/
+    /*global Vector, ctx*/
+
+    var Movable = function () {
+        this.init.apply(this, arguments);
+    },
         proto = Movable.prototype,
+        vectorNames = ['position', 'velocity', 'acceleration'],
+        methodNames = ['set', 'add', 'mul'],
         friction = 1,
         onVectorNames,
         i;
@@ -66,4 +65,6 @@ var Movable = function () {
     proto.toString = function () {
         return this.position.toString();
     };
+    
+    window.Movable = Movable;
 }());

@@ -1,13 +1,12 @@
-"use strict";
-/*jslint browser:true*/
-/*global Movable, ctx*/
-
-var Rope = function () {
-    this.init.apply(this, arguments);
-};
-
 (function () {
-    var proto = Rope.prototype,
+    "use strict";
+    /*jslint browser:true*/
+    /*global Movable, Color, Spring, ctx*/
+
+    var Rope = function () {
+        this.init.apply(this, arguments);
+    },
+        proto = Rope.prototype,
         i,
         origin,
         onEach;
@@ -20,12 +19,32 @@ var Rope = function () {
     };
     
     proto.init = function (options) {
+        var point,
+            lastPoint,
+            springLength,
+            k;
+        
+        options = options || {};
+        k = options.k || 0.9;
+        springLength = options.springLength || 5;
         this.options = options;
-        this.list = [];
+        this.pointList = [];
+        this.springList = [];
+        
         for (i = 0; i < this.options.pointCount; i += 1) {
-            this.list.push(new Movable());
+            point = new Movable();
+            this.pointList.push(point);
+            if (lastPoint) {
+                this.springList.push(new Spring({
+                    k : k,
+                    p1 : lastPoint,
+                    p2 : point,
+                    length: springLength
+                }));
+            }
+            lastPoint = point;
         }
-        this.origin = this.list[0];
+        this.origin = this.pointList[0];
     };
     
     proto.render = function (ctx) {
@@ -36,20 +55,19 @@ var Rope = function () {
             xLast,
             yLast,
             useCurve = true,
-            stretch = options.stretch,
             line = options.line,
-            segLength = options.segLength,
             strokeStyle = options.strokeStyle,
-            list = this.list;
+            springList = this.springList,
+            list = this.pointList,
+            cp;
         
 		onEach(function (point, i) {
 			if (i) {
                 ///////////////
                 //Integrating//
                 ///////////////
-                var distance = lastPos.clone().sub(point.position);
-                distance.setMag(distance.mag() - segLength);
-                point.move(distance.x * stretch, distance.y * stretch);
+                var spring = springList[i - 1];
+                spring.integrate();
 			}
 			point.integrate();
             
@@ -58,7 +76,12 @@ var Rope = function () {
 			/////////////
 			if (i) {
                 if (instance.strokeStyle) {
-                    ctx.strokeStyle = instance.strokeStyle;
+                    if (instance.strokeStyle.constructor === Color) {
+                        ctx.strokeStyle = instance.strokeStyle.hslaString();
+                        
+                    } else {
+                        ctx.strokeStyle = instance.strokeStyle;
+                    }
                     
                 } else {
                     if (strokeStyle) {
@@ -75,7 +98,7 @@ var Rope = function () {
 				ctx.moveTo(xLast, yLast);
                 
                 if (useCurve) {
-                    var cp = {
+                    cp = {
                         'x' : (xLast + point.x()) / 2,
                         'y' : (yLast + point.y()) / 2
                     };
@@ -90,7 +113,7 @@ var Rope = function () {
             lastPos = point.position;
 			xLast = lastPos.x;
 			yLast = lastPos.y;
-		}, this.list);
+		}, this.pointList);
 	};
     
     proto.setOrigin = function () {
@@ -101,7 +124,7 @@ var Rope = function () {
 		var arg = arguments;
 		onEach(function (item, index) {
             item.place.apply(item, arg);
-		}, this.list);
+		}, this.pointList);
 	};
     
     proto.move = function () {
@@ -111,4 +134,6 @@ var Rope = function () {
     proto.accelerate = function () {
         this.origin.accelerate.apply(this.origin, arguments);
     };
+    
+    window.Rope = Rope;
 }());

@@ -1,83 +1,122 @@
-"use strict";
-/*jslint browser:true, continue:true*/
-/*global Animator, Rope, Bubble, FireWork, RandomUtil, width, height, ctx*/
-
-var fireWorkList = [];
-var emptyIndexList = [];
-var bubbleList = [];
-var fireWork = new FireWork();
-var padding = 200;
-
-var followerRope = defaultRopeFactory.get();
-followerRope.strokeStyle = ColorUtil.string.hsla(10, 100, 50, 0.8);
-var generateFireWork = function () {
-	var x = RandomUtil.i(padding, width - padding),
-        y = RandomUtil.i(padding, padding + 100),
-        fireWork = new FireWork(x, y),
-        index;
+(function () {
+    "use strict";
+    /*jslint browser:true, continue:true*/
+    /*global Animator, Bubble, FireWork, Color, InfinityAnimator,
+        RandomUtil, defaultRopeFactory, ctx, showMouse*/
     
-	if (emptyIndexList.length) {
-		index = emptyIndexList.pop();
-		fireWorkList[index] = fireWork;
+    var fireWorkList = [],
+        emptyIndexList = [],
+        bubbleList = [],
+        padding = 200,
+        width = ctx.canvas.width,
+        height = ctx.canvas.height,
+        followerRope = defaultRopeFactory.get(),
+        
+        generateFireWork = function () {
+            var x = RandomUtil.i(padding, width - padding),
+                y = RandomUtil.i(padding, padding + 100),
+                fireWork = new FireWork(x, y),
+                index;
+            
+            if (emptyIndexList.length) {
+                index = emptyIndexList.pop();
+                fireWorkList[index] = fireWork;
+            } else {
+                fireWorkList.push(fireWork);
+            }
+        },
+        
+        dropBall = function () {
+            var bubble = new Bubble(),
+                x = RandomUtil.i(padding, width - padding),
+                y = RandomUtil.i(padding, padding + 100),
+                index;
 
-	} else {
-		fireWorkList.push(fireWork);
-	}
-};
+            bubble.place(x, y);
+            bubble.radius(5);
+            bubble.move(2, -6, 0);
+            bubble.accelerate(0, 0.3, 0);
+            bubbleList.push(bubble);
+        },
+        
+        render = function (ctx) {
+            ctx.fillRect(0, 0, width, height);
+            followerRope.render(ctx);
+            var fireWork, i;
+            //var removeList = [];
+            for (i = 0; i < fireWorkList.length; i += 1) {
+                fireWork = fireWorkList[i];
+                if (!fireWork) {
+                    continue;
+                }
 
-var dropBall = function () {
-    var bubble = new Bubble(),
-        x = RandomUtil.i(padding, width - padding),
-        y = RandomUtil.i(padding, padding + 100),
-        index;
+                if (fireWork.done) {
+                    fireWorkList[i] = null;
+                    emptyIndexList.push(i);
+                    continue;
+                }
+
+                fireWork.render(ctx);
+            }
+
+            for (i = 0; i < bubbleList.length; i += 1) {
+                bubbleList[i].render(ctx);
+            }
+        },
+        
+        integrate = function () {
+            //bubble.integrate();
+        },
+        
+        infinityAnimator =  new InfinityAnimator({
+            offsetX : width / 2,
+            offsetY : height / 2
+        }),
+        
+        mouseMoveTimeoutId,
+        mouseIdle = false,
+        
+        playInfinity = function () {
+            infinityAnimator.step(function (x, y) {
+                followerRope.hueShift();
+                followerRope.setOrigin(x, y);
+            });
+        },
+        
+        mouseMoved = function (x, y) {
+            mouseIdle = false;
+            //showMouse(mouseIdle);
+            clearTimeout(mouseMoveTimeoutId);
+            mouseMoveTimeoutId = setTimeout(function () {
+                mouseIdle = true;
+                //showMouse(mouseIdle);
+            }, 3000);
+            
+            if (!mouseIdle) {
+                followerRope.hueShift();
+                followerRope.setOrigin(x, y);
+            }
+        },
+        
+        animator = new Animator({
+            playing : false,
+            callback : function () {
+                if (mouseIdle) {
+                    playInfinity();
+                }
+                render(ctx);
+            }
+        });
     
-    bubble.place(x, y);
-    bubble.radius(5);
-    bubble.move(2, -6, 0);
-    bubble.accelerate(0, 0.3, 0);
-    bubbleList.push(bubble);
-};
-
-generateFireWork();
-
-var render = function (ctx) {
-	ctx.fillRect(0, 0, width, height);
-    followerRope.render(ctx);
-	var fireWork, i;
-	//var removeList = [];
-	for (i = 0; i < fireWorkList.length; i += 1) {
-		fireWork = fireWorkList[i];
-		if (!fireWork) {
-			continue;
-		}
-
-		if (fireWork.done) {
-			fireWorkList[i] = null;
-			emptyIndexList.push(i);
-			continue;
-		}
-
-		fireWork.render(ctx);
-	}
+    followerRope.strokeStyle = Color.hsla(0, 100, 50, 1);
+    followerRope.hueShift = function () {
+        followerRope.strokeStyle.hueShift(0.5);
+    };
     
-    for (i = 0; i < bubbleList.length; i += 1) {
-        bubbleList[i].render(ctx);
-    }
-};
-
-var integrate = function () {
-	//bubble.integrate();
-};
-
-var animator = new Animator(function () {
-    render(ctx);
-});
-
-var mouseMoved = function (x, y) {
-    followerRope.setOrigin(x, y);
-};
-/*
-var v1 = new Vector(1, 2, 3);
-var v2 = new Vector(0, 1, 2);
-var v3 = v1.clone().sub(v2);
-console.log(v3);*/
+    animator.play();
+    
+    window.mouseMoved = mouseMoved;
+    window.animator = animator;
+    window.generateFireWork = generateFireWork;
+    window.dropBall = dropBall;
+}());
