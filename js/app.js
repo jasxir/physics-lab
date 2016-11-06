@@ -8,12 +8,10 @@
         emptyIndexList = [],
         bubbleList = [],
         padding = 200,
-        width = ctx.canvas.width,
-        height = ctx.canvas.height,
         followerRope = defaultRopeFactory.get(),
         
         generateFireWork = function () {
-            var x = RandomUtil.i(padding, width - padding),
+            var x = RandomUtil.i(padding, ctx.width - padding),
                 y = RandomUtil.i(padding, padding + 100),
                 fireWork = new FireWork(x, y),
                 index;
@@ -28,7 +26,7 @@
         
         dropBall = function () {
             var bubble = new Bubble(),
-                x = RandomUtil.i(padding, width - padding),
+                x = RandomUtil.i(padding, ctx.width - padding),
                 y = RandomUtil.i(padding, padding + 100),
                 index;
 
@@ -40,7 +38,7 @@
         },
         
         render = function (ctx) {
-            ctx.fillRect(0, 0, width, height);
+            ctx.clear();
             followerRope.render(ctx);
             var fireWork, i;
             //var removeList = [];
@@ -69,8 +67,8 @@
         },
         
         infinityAnimator =  new InfinityAnimator({
-            offsetX : width / 2,
-            offsetY : height / 2
+            offsetX : ctx.width / 2,
+            offsetY : ctx.height / 2
         }),
         
         mouseMoveTimeoutId,
@@ -84,6 +82,8 @@
         },
         
         mouseMoved = function (x, y) {
+            x = ctx.localX(x);
+            y = ctx.localY(y);
             mouseIdle = false;
             //showMouse(mouseIdle);
             clearTimeout(mouseMoveTimeoutId);
@@ -112,6 +112,15 @@
     followerRope.hueShift = function () {
         followerRope.strokeStyle.hueShift(0.5);
     };
+    
+    ctx.onResolutionChanged = function(width, height) {
+        infinityAnimator.set({
+            width : width * 0.3,
+            height : height * 0.3,
+            offsetX : width / 2,
+            offsetY : height / 2
+        });
+    }
     
     animator.play();
     

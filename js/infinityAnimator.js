@@ -27,6 +27,10 @@
         merge.left(DEFAULT_SETTINGS, options, this);
     };
     
+    proto.set = function (options) {
+        merge.left(this, options, this);
+    };
+    
     proto.step = function (callback) {
         var dx,
             dy,

@@ -1,16 +1,15 @@
 (function () {
     'use strict';
+    /*global CanvasRenderer*/
     
-    var canvas = document.getElementById('mCanvas'),
-        ctx = canvas.getContext('2d'),
-        resolutionMultiplier = 1;
+    var canvasRenderer = new CanvasRenderer({
+        surface : 'mCanvas'
+    }),
+        ctx = canvasRenderer.getContext();
     
-    canvas.width = window.innerWidth * resolutionMultiplier;
-    canvas.height = window.innerHeight * resolutionMultiplier;
-    
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#888';
+    ctx.resolution.factor(0.7);
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     
     //TODO exposing to window, think of a better way.
     window.ctx = ctx;
