@@ -7,8 +7,8 @@
     }),
         ctx = canvasRenderer.getContext();
     
-    ctx.resolution.factor(0.7);
-    ctx.lineCap = 'round';
+    
+    //ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
     //TODO exposing to window, think of a better way.

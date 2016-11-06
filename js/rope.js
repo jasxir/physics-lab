@@ -50,18 +50,17 @@
     proto.render = function (ctx) {
         var instance = this,
             options = this.options,
-            divisor = 1.8,
             lastPos,
             xLast,
             yLast,
-            useCurve = true,
+            useCurve = false,
             line = options.line,
-            strokeStyle = options.strokeStyle,
+            //TODO review line below.
+            strokeStyle = instance.strokeStyle || options.strokeStyle,
             springList = this.springList,
-            list = this.pointList,
             cp;
         
-		onEach(function (point, i) {
+        this.pointList.forEach(function (point, i, pointList) {
 			if (i) {
                 ///////////////
                 //Integrating//
@@ -71,29 +70,23 @@
 			}
 			point.integrate();
             
-			/////////////
+            /////////////
 			//Rendering//
 			/////////////
 			if (i) {
-                if (instance.strokeStyle) {
-                    if (instance.strokeStyle.constructor === Color) {
-                        ctx.strokeStyle = instance.strokeStyle.hslaString();
+                if (strokeStyle) {
+                    if (strokeStyle.constructor === Color) {
+                        ctx.strokeStyle = strokeStyle.hslaString();
+                        
+                    } else if (strokeStyle.constructor === Function) {
+                        ctx.strokeStyle = strokeStyle();
                         
                     } else {
-                        ctx.strokeStyle = instance.strokeStyle;
-                    }
-                    
-                } else {
-                    if (strokeStyle) {
-                        if (strokeStyle.constructor === Function) {
-                            ctx.strokeStyle = strokeStyle();
-                        } else {
-                            ctx.strokeStyle = strokeStyle;
-                        }
+                        ctx.strokeStyle = strokeStyle;
                     }
                 }
                 
-				ctx.lineWidth = line.width.min + (list.length - i) * line.width.ratio;
+				ctx.lineWidth = line.width.min + (pointList.length - i) * line.width.ratio;
 				ctx.beginPath();
 				ctx.moveTo(xLast, yLast);
                 
@@ -107,13 +100,13 @@
                 } else {
                     ctx.lineTo(point.x(), point.y());
                 }
-				ctx.stroke();
+                ctx.stroke();   
 			}
-
+            
             lastPos = point.position;
 			xLast = lastPos.x;
 			yLast = lastPos.y;
-		}, this.pointList);
+		});
 	};
     
     proto.setOrigin = function () {

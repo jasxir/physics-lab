@@ -3,14 +3,14 @@
     /*jslint browser:true*/
     
     var Animator = function (options) {
-        var MIN_DELAY = 16,// 60fps,
+        var MIN_DELAY = 16,// ~60fps,
             MAX_DELAY = 100,
             instance = this,
             callback,
             playing,
             delay,
             step;
-
+        
         options = options || {};
         if (options.constructor === Function) {
             callback = options;

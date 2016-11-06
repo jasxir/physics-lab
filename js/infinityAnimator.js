@@ -15,11 +15,7 @@
             height : 100,
             angle : {
                 value : 0,
-                change : Math.toRad(3),
-                rotate : {
-                    value : 0,
-                    change : Math.toRad(0.00)
-                }
+                change : Math.toRad(1)
             }
         };
     
@@ -34,7 +30,7 @@
     proto.step = function (callback) {
         var dx,
             dy,
-            mul = 2;
+            mul = 4;
         
         this.angle.value += this.angle.change;
         
@@ -45,10 +41,8 @@
             this.angle.value = 0;
         }
         
-        this.angle.rotate.value += this.angle.rotate.change;
-        
         dx = this.width * Math.sin(this.angle.value);
-        dy = this.height * Math.sin(mul * this.angle.value + this.angle.rotate.value);
+        dy = this.height * Math.sin(mul * this.angle.value);
         callback(this.offsetX + dx, this.offsetY + dy);
     };
     

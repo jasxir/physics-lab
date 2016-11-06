@@ -37,6 +37,15 @@
             bubbleList.push(bubble);
         },
         
+        followerColor,
+        
+        followerColorProvier = new ColorProvider({
+            baseColor : Color.hsla(0, 100, 50, 1),
+            change : function(color) {
+                color.hueShift(0.2);
+            }
+        }),
+        
         render = function (ctx) {
             ctx.clear();
             followerRope.render(ctx);
@@ -60,6 +69,8 @@
             for (i = 0; i < bubbleList.length; i += 1) {
                 bubbleList[i].render(ctx);
             }
+            
+            followerColor = followerColorProvier.get();
         },
         
         integrate = function () {
@@ -72,11 +83,11 @@
         }),
         
         mouseMoveTimeoutId,
-        mouseIdle = false,
+        mouseIdle = true,
         
         playInfinity = function () {
             infinityAnimator.step(function (x, y) {
-                followerRope.hueShift();
+                //followerRope.hueShift();
                 followerRope.setOrigin(x, y);
             });
         },
@@ -93,7 +104,7 @@
             }, 3000);
             
             if (!mouseIdle) {
-                followerRope.hueShift();
+                //followerRope.hueShift();
                 followerRope.setOrigin(x, y);
             }
         },
@@ -108,19 +119,32 @@
             }
         });
     
+    //var followerStrokeColor = Color.hsla(0, 100, 50, 1);
+    
+    followerRope.strokeStyle = function () {
+        if (!followerColor) {
+            return null;
+        }
+        followerColor.hueShift(3);
+        return followerColor.hslaString();
+    };
+    
+    /*
     followerRope.strokeStyle = Color.hsla(0, 100, 50, 1);
     followerRope.hueShift = function () {
         followerRope.strokeStyle.hueShift(0.5);
+    };*/
+    
+    ctx.onResolutionChanged = function (width, height) {
+        infinityAnimator.set({
+            width : width * 0.4,
+            height : height * 0.4,
+            offsetX : width * 0.5,
+            offsetY : height * 0.5
+        });
     };
     
-    ctx.onResolutionChanged = function(width, height) {
-        infinityAnimator.set({
-            width : width * 0.3,
-            height : height * 0.3,
-            offsetX : width / 2,
-            offsetY : height / 2
-        });
-    }
+    ctx.resolution.auto();
     
     animator.play();
     

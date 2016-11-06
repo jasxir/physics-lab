@@ -18,8 +18,8 @@
     angle.max = angle.mid + angle.spread / 2;
     
     ropeFactory = new RopeFactory({
-        'pointCount' : 4,
-        'k' : 0.2,
+        'pointCount' : 6,
+        'k' : 0.4,
         'line' : {
             'width' : {
                 'min' : 0,

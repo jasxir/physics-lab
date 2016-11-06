@@ -5,15 +5,15 @@
 var RopeFactory = function (options) {
     var line,
         DEFAULT_OPTIONS = {
-            pointCount    : 50,
-            k       : 0.8,
+            pointCount    : 40,
+            k       : 0.89,
             line : {
                 width : {
                     min : 1,
                     max : 8
                 }
             },
-            length : 1
+            length : 0.5
         };
     
     options = merge.left(DEFAULT_OPTIONS, options);

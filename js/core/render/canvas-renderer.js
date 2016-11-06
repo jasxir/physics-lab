@@ -29,7 +29,7 @@
         };
         
         ctx.resolution.auto = function () {
-            ctx.resolution.factor();
+            ctx.resolution.factor(1);
         };
         
         ctx.localX = function (x) {

@@ -81,6 +81,10 @@
         }
 	};
     
+    proto.clone = function () {
+        return Color.hsla(this.h, this.s, this.l, this.a);
+    };
+    
     proto.hslaString = function () {
         return ColorUtil.string.hsla(this.h, this.s, this.l, this.a);
     };
