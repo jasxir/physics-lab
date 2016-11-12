@@ -4,25 +4,25 @@
     /*global RandomUtil, Color*/
     
     var ColorUtil = {
-        'string' : {
-            'rgba' : function (r, g, b, a) {
-                return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        "string" : {
+            "rgba" : function (r, g, b, a) {
+                return "rgba(" + r + "," + g + "," + b + "," + a + ")";
             },
 
-            'rgb' : function (r, g, b) {
-                return 'rgb(' + r + ',' + g + ',' + b + ')';
+            "rgb" : function (r, g, b) {
+                return "rgb(" + r + "," + g + "," + b + ")";
             },
 
-            'hsl' : function (h, s, l) {
-                return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+            "hsl" : function (h, s, l) {
+                return "hsl(" + h + "," + s + "%," + l + "%)";
             },
 
-            'hsla' : function (h, s, l, a) {
-                return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
+            "hsla" : function (h, s, l, a) {
+                return "hsla(" + h + "," + s + "%," + l + "%," + a + ")";
             }
         },
 
-        'toHSL' : function (r, g, b) {
+        "toHSL" : function (r, g, b) {
             r /= 255;
             g /= 255;
             b /= 255;
@@ -66,13 +66,13 @@
             l *= 100;
 
             return {
-                'h' : h,
-                's' : s,
-                'l' : l
+                "h" : h,
+                "s" : s,
+                "l" : l
             };
         },
 
-        'random' : function (min) {
+        "random" : function (min) {
             return new Color(
                 ColorUtil.randomElement(min),
                 ColorUtil.randomElement(min),
@@ -80,12 +80,12 @@
             );
         },
 
-        'randomElement' : function (min) {
+        "randomElement" : function (min) {
             return RandomUtil.i(min, 255);
         },
 
-        'calculate' : {
-            'HSL' : function (c) {
+        "calculate" : {
+            "HSL" : function (c) {
                 var hsl = ColorUtil.toHSL(c.r, c.g, c.b);
                 c.set.hsl(hsl.h, hsl.s, hsl.l);
             }

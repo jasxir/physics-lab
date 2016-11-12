@@ -7,8 +7,8 @@
         this.init.apply(this, arguments);
     },
         proto = Movable.prototype,
-        vectorNames = ['position', 'velocity', 'acceleration'],
-        methodNames = ['set', 'add', 'mul'],
+        vectorNames = ["position", "velocity", "acceleration"],
+        methodNames = ["set", "add", "mul"],
         friction = 1,
         onVectorNames,
         i;

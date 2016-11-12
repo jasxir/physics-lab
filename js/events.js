@@ -3,7 +3,7 @@
     /*jslint browser:true, continue:true*/
     /*global Event, animator, generateFireWork, dropBall, mouseMoved, ctx*/
     
-    window.addEventListener('keypress', function (event) {
+    window.addEventListener("keypress", function (event) {
         //console.log(event.which);
         switch (event.which) {
         case 32://<Space>
@@ -30,22 +30,22 @@
         }
     });
 
-    window.addEventListener('mousemove', function (event) {
+    window.addEventListener("mousemove", function (event) {
         mouseMoved(event.clientX, event.clientY);
     });
     
     var resizeTimeoutId,
         MILLIS_TIMEOUT_RESIZE = 98;
     
-    window.addEventListener('resize', function (event) {
+    window.addEventListener("resize", function (event) {
         clearTimeout(resizeTimeoutId);
         resizeTimeoutId = setTimeout(function () {
-            var newEvent = new Event('resized');
+            var newEvent = new Event("resized");
             window.dispatchEvent(newEvent);
         }, MILLIS_TIMEOUT_RESIZE);
     });
     
-    window.addEventListener('resized', function (event) {
+    window.addEventListener("resized", function (event) {
         ctx.resolution.factor();
     });
     

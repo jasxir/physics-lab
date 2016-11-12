@@ -9,7 +9,7 @@ var Bubble = function () {
     
 	instance.render = function (ctx) {    
         origin.integrate.apply(origin);        
-        ctx.strokeStyle = '#FF0011';
+        ctx.strokeStyle = "#FF0011";
 		ctx.beginPath();
 		ctx.ellipse(origin.x(), origin.y(), radius, radius, Math.toRad(45), 0, Math.toRad(360));
 		ctx.stroke();

@@ -92,8 +92,8 @@
                 
                 if (useCurve) {
                     cp = {
-                        'x' : (xLast + point.x()) / 2,
-                        'y' : (yLast + point.y()) / 2
+                        "x" : (xLast + point.x()) / 2,
+                        "y" : (yLast + point.y()) / 2
                     };
                     ctx.quadraticCurveTo(cp.x, cp.y, point.x(), point.y());
                     

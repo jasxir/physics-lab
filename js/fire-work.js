@@ -9,8 +9,8 @@
         proto = FireWork.prototype,
         MAX_STRANDS = 9,
         angle = {
-            'mid' : 270,
-            'spread' : 100
+            "mid" : 270,
+            "spread" : 100
         },
         ropeFactory;
     
@@ -18,12 +18,12 @@
     angle.max = angle.mid + angle.spread / 2;
     
     ropeFactory = new RopeFactory({
-        'pointCount' : 6,
-        'k' : 0.4,
-        'line' : {
-            'width' : {
-                'min' : 0,
-                'max' : 3
+        "pointCount" : 6,
+        "k" : 0.4,
+        "line" : {
+            "width" : {
+                "min" : 0,
+                "max" : 3
             }
         }
     });

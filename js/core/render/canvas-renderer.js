@@ -2,7 +2,7 @@
     var CanvasRenderer = function (options) {
         var instance = this,
             canvas = document.getElementById(options.surface),
-            ctx = canvas.getContext('2d'),
+            ctx = canvas.getContext("2d"),
             resolutionFactor = 1;
         
         ctx.resolution = function (width, height) {
@@ -22,7 +22,7 @@
         };
         
         ctx.resolution.factor = function (factor) {
-            if(factor) {
+            if (factor) {
                 resolutionFactor = factor;
             }
             ctx.resolution(window.innerWidth * resolutionFactor, window.innerHeight * resolutionFactor);

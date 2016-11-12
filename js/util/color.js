@@ -6,7 +6,7 @@
     var Color = function () {
         var instance = this;
         instance.set = {
-            'hsla' : function (h, s, l, a) {
+            "hsla" : function (h, s, l, a) {
                 instance.h = h;
                 instance.s = s;
                 instance.l = l;
@@ -14,7 +14,7 @@
                 //ColorUtil.calculate.RGB(instance);
             },
             
-            'rgba' : function (r, g, b, a) {
+            "rgba" : function (r, g, b, a) {
                 instance.r = r;
                 instance.g = g;
                 instance.b = b;

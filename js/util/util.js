@@ -1,5 +1,5 @@
 var merge = {
-    'left' : function (m1, m2, result) {
+    "left" : function (m1, m2, result) {
         var key;
         result = result || {};
         

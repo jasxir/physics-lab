@@ -2,7 +2,7 @@
     "use strict";
 
     var FunctionUtil = {
-        'apply' : function (fn, arg, index, ctx) {
+        "apply" : function (fn, arg, index, ctx) {
             var i,
                 list = null;
 

@@ -4,6 +4,9 @@
     /*global Animator, Bubble, FireWork, Color, InfinityAnimator,
         RandomUtil, defaultRopeFactory, ctx, showMouse*/
     
+    //var webGLRenderer = new WebGLRenderer();
+    //return; 
+    
     var fireWorkList = [],
         emptyIndexList = [],
         bubbleList = [],

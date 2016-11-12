@@ -8,7 +8,7 @@ var Vector = function () {
 
 (function () {
     var proto = Vector.prototype,
-        valueKeys = ['x', 'y', 'z'],
+        valueKeys = ["x", "y", "z"],
         onEach,
         objectAfter,
         toObject,
@@ -173,7 +173,7 @@ var Vector = function () {
     
     proto.toString = function () {
         var v = this;
-        return v.x + ', ' + v.y + ', ' + v.z;
+        return v.x + ", " + v.y + ", " + v.z;
     };
     
     proto.rotateXY = function (angleRad) {
@@ -188,8 +188,8 @@ var Vector = function () {
         var x = m * Math.cos(angleRad),
             y = m * Math.sin(angleRad);
         return {
-            'x' : x,
-            'y' : y
+            "x" : x,
+            "y" : y
         };
     };
     
