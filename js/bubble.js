@@ -1,5 +1,5 @@
 "use strict";
-/*jslint browser:true, continue:true*/
+/*jslint browser:true*/
 /*global Movable, toRad, ctx*/
 
 var Bubble = function () {

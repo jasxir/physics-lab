@@ -1,0 +1,53 @@
+<html>
+<head>
+</head>
+<body>
+    <canvas id="lesson01-canvas" style="border: none;" width="500" height="500"></canvas>
+    
+    <style>
+        body {
+            background-color: #1d002d;
+        }
+    </style>
+    
+    <script
+        id="shader-vs"
+        type="x-shader/x-vertex"
+        data-type="VERTEX_SHADER"
+    >
+        attribute vec3 aVertexPosition;
+        attribute vec4 aVertexColor;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        varying vec4 vColor;
+
+        void main(void) {
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+            vColor = aVertexColor;
+        }
+    </script>
+    
+    <script
+        id="shader-fs"
+        type="x-shader/x-fragment"
+        data-type="FRAGMENT_SHADER"
+    >
+        precision mediump float;
+
+        varying vec4 vColor;
+
+        void main(void) {
+            gl_FragColor = vColor;
+        }
+    </script>
+    
+    <script type="text/javascript" src="js/_lib/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="js/core/render/webgl/util.js"></script>
+    <script type="text/javascript" src="js/core/render/webgl-test.js"></script>
+    <script type="text/javascript">
+        webGLStart();
+    </script>
+</body>
+</html>
