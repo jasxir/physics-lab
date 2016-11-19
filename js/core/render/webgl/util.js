@@ -1,12 +1,14 @@
 (function () {
     "use strict";
-
+    /*global Uint16Array, Float32Array*/
+    /*jslint continue:true*/
+    
     var
         createShader = function (gl, type, code) {
             type = gl[type];
             var shader = gl.createShader(type),
                 slValues = ["uniform", "attribute", "varying"];
-            
+
             gl.shaderSource(shader, code);
             gl.compileShader(shader);
             if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -58,7 +60,7 @@
                             if (map[name]) {
                                 return;
                             }
-                            
+
                             switch (key) {
                             case "uniform":
                                 map[name] = gl.getUniformLocation(shaderProgram, name);
@@ -104,8 +106,6 @@
                 operation();
             });
 
-            window.x = shaderProgram;
-
             //TODO does this need to be here??
             gl.useProgram(shaderProgram);
 
@@ -123,45 +123,65 @@
                     }
                 }
             };
-            
+
             shaderProgram.attribute.apply = function (map) {
                 var key,
                     attribute,
+                    data,
                     buffer;
-                
+
                 for (key in map) {
-                    buffer = map[key];
                     if (map.hasOwnProperty(key)) {
-                        attribute = shaderProgram.attribute[key];
-                        if (attribute !== undefined) {
-                            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-                            gl.vertexAttribPointer(attribute,
-                                buffer.itemSize, gl.FLOAT, false, 0, 0);
+                        buffer = map[key];
+                        if (!buffer) {
+                            continue;
+                        }
+
+                        if (map.hasOwnProperty(key)) {
+                            attribute = shaderProgram.attribute[key];
+                            gl.bindBuffer(buffer.type, buffer);
+
+                            if (attribute !== undefined) {
+                                gl.vertexAttribPointer(
+                                    attribute,
+                                    buffer.itemSize,
+                                    gl.FLOAT,
+                                    false,
+                                    0,
+                                    0
+                                );
+                            }
                         }
                     }
                 }
             };
-            
+
             shaderProgram.drawMode = gl.TRIANGLES;
             // POINTS, LINE_STRIP, LINE_LOOP, LINES,
             // TRIANGLE_STRIP,TRIANGLE_FAN, TRIANGLES
 
-            shaderProgram.draw = function (map, buffer, colorBuffer) {
-                shaderProgram.attribute.apply({
-                    "aVertexColor" : colorBuffer,
-                    "aVertexPosition" : buffer
-                });
-                
-                shaderProgram.uniform.apply(map);
-                gl.drawArrays(shaderProgram.drawMode, 0, buffer.numItems);
+            shaderProgram.draw = function (uniformMap, attrMap) {
+                shaderProgram.attribute.apply(attrMap);
+                shaderProgram.uniform.apply(uniformMap);
+
+                //TODO this is using a constant from GLSL.
+                var buffer = attrMap.aVertexPosition,
+                    indexBuffer = attrMap.$;
+
+                if (indexBuffer) {
+                    gl.drawElements(shaderProgram.drawMode, indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+                } else {
+                    gl.drawArrays(shaderProgram.drawMode, 0, buffer.numItems);
+                }
             };
-            
+
             for (key in shaderProgram.attribute) {
                 if (shaderProgram.attribute.hasOwnProperty(key)) {
                     gl.enableVertexAttribArray(shaderProgram.attribute[key]);
                 }
             }
-            
+
             return shaderProgram;
         },
 
@@ -172,7 +192,49 @@
                 argList.push(createShaderFromScript(gl, arguments[i]));
             }
             return createProgram.apply(null, argList);
-        };
+        },
 
+        initTexture = function (callback, gl, src) {
+            var texture = gl.createTexture();
+            texture.image = new Image();
+            texture.image.onload = function () {
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+                callback(texture);
+            };
+            texture.image.src = src;
+        },
+        
+        createBuffer = function (gl, itemSize, array) {
+            var ArrayType,
+                type,
+                buffer;
+    
+            if (itemSize === gl.ELEMENT_ARRAY_BUFFER) {
+                type = gl.ELEMENT_ARRAY_BUFFER;
+                itemSize = 1;
+                ArrayType = Uint16Array;
+
+            } else {
+                type = gl.ARRAY_BUFFER;
+                ArrayType = Float32Array;
+            }
+
+            buffer = gl.createBuffer();
+            gl.bindBuffer(type, buffer);
+            gl.bufferData(type, new ArrayType(array), gl.STATIC_DRAW);
+
+            buffer.type = type;
+            buffer.itemSize = itemSize;
+            buffer.numItems = array.length / itemSize;
+            return buffer;
+        };
+    
     window.createProgramFromScript = createProgramFromScript;
+    window.createBuffer = createBuffer;
+    window.initTexture = initTexture;
 }());
